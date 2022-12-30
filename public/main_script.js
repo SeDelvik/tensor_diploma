@@ -2,15 +2,16 @@ let apiKey = 'f83fcb45f7f2bb4929e8f19f7e415158';
 
 let imgZaglushka = '../data/images/cat.jpg';
 
-document.onreadystatechange = async function () {
-    createMain();
-}
+createMain();
+// document.onreadystatechange = async function () {
+//     createMain();
+// }
 
 /**
  * Создание главной страницы с популярными штуками.
  */
 async function createMain(){
-    if (document.readyState === 'complete') {
+    //if (document.readyState === 'complete') {
         let searchButton = document.getElementsByClassName('search_img')[0];
         let searchField = document.getElementsByClassName('search_field')[0];
         let searchForm = document.getElementsByClassName('search_main')[0];
@@ -27,7 +28,7 @@ async function createMain(){
             event.preventDefault();
             search(searchField.value);
         }
-    }
+    //}
 }
 
 /**
