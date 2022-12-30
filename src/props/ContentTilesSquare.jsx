@@ -9,50 +9,44 @@ import { ContentTileSquare } from "./ContentTileSquare";
  * @returns реакт-элемент с набором карточек
  */
 export const ContentTilesSquare = (props) => {
-    let pr = [];
-    const [arr, setArr] = useState([]);
+    const [arr,setArr] =useState([]);
     /**
      * создает массив с данными для карточек
      */
-    async function namess() {
-        pr = await getTopTracks();
-        for (let i = 0; i < pr.length; i++) {
-            pr[i].image = cat;
+    async function namess(){
+        let pr = await getTopTracks();
+        for(let i=0;i<pr.length;i++){
+           pr[i].image = cat;
+           pr[i].key = i;
         }
-        upd();
+       return pr;
     }
     /**
      * вставка картинок в массив данных
      */
-    async function images() {
-        for (let i = 0; i < pr.length; i++) {
+    async function images(mas){
+        let pr = [...mas];
+        for(let i=0;i<pr.length;i++){
             pr[i].image = await getPic();
         }
-        upd();
+        return pr;
     }
-    /** 
-     * создане карточек по массиву днных
-    */
-    function upd() {
-        let arr2 = [];
-        for (let i = 0; i < pr.length; i++) {
-            arr2.push(<ContentTileSquare image={pr[i].image} track={pr[i].name} artist={pr[i].artist.name} listners={pr[i].listners} key={i} />);
-        }
-        setArr(arr2);
-    }
-    useEffect(() => {
-        async function tmp() {
-            await namess();
-            await images();
+    useEffect(()=>{
+        async function tmp(){
+            let t = await namess();
+            setArr([...t]);
+            t = await images(t);
+            setArr([...t]);
         }
         tmp();
-
-    }, []);
-
+      
+    },[]);
 
     return (
         <div className="content_tiles_square">
-            {arr}
+            {arr.map(element => {
+                return <ContentTileSquare image={element.image} track={element.name} artist={element.artist.name} listners={element.listners} key={element.key} />
+            })}
         </div>
     );
 }

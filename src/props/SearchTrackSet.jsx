@@ -9,44 +9,35 @@ import { SearchTrack } from './SearchTrack';
  * @returns реакт-элемент с треками
 */
 export const SearchTrackSet = (props) =>{
-    let pr = [];
     const [arr, setArr] = useState([]);
-
     /**
      * создает массив с данными для карточек
      */
     async function namess() {
-        pr = await getSearchTracks(props.text);
+        let pr = await getSearchTracks(props.text);
         for (let i = 0; i < pr.length; i++) {
             pr[i].image = cat;
+            pr[i].key=i;
         }
-        upd();
+       return pr;
     }
     /**
      * вставка картинок в массив данных
      */
-    async function images() {
+    async function images(mass) {
+        let pr = [...mass]
         for (let i = 0; i < pr.length; i++) {
             pr[i].image = await getPic();
         }
-        upd();
+        return pr;
     }
 
-    /** 
-     * создане карточек по массиву днных
-    */
-    function upd() {
-        let arr2 = [];
-        for (let i = 0; i < pr.length; i++) {
-            arr2.push(<SearchTrack image={pr[i].image} title={pr[i].name} artist={pr[i].artist} min={getRandMin()} sec={getRandSec()} key={i} />);
-        }
-        
-        setArr(arr2);
-    }
     useEffect(() => {
-        async function tmp() {
-            await namess();
-            await images();
+        async function tmp(){
+            let t = await namess();
+            setArr([...t]);
+            t = await images(t);
+            setArr([...t]);
         }
         tmp();
 
@@ -55,7 +46,9 @@ export const SearchTrackSet = (props) =>{
 
     return (
         <div className="track_set">
-            {arr}
+            {arr.map(element => {
+                return <SearchTrack image={element.image} title={element.name} artist={element.artist} min={getRandMin()} sec={getRandSec()} key={element.key} />
+            })}
         </div>
     );
 }

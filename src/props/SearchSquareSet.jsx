@@ -8,12 +8,13 @@ import { getPic, getJson } from '../funcs'
  * @returns реакт элемент
  */
 export const SearchSquareSet = (props) => {
-    let pr = [];
+    
     const [arr, setArr] = useState([]);
     /**
      * создает массив с данными для карточек
      */
     async function namess() {
+        let pr = [];
         if(props.isArtists){
             pr = await getSearchArtists(props.text);
         }else{
@@ -22,39 +23,31 @@ export const SearchSquareSet = (props) => {
        
         for (let i = 0; i < pr.length; i++) {
             pr[i].image = cat;
+            pr[i].key = i;
+            if(props.isArtists){
+                pr[i].other =pr[i].listeners +' listeners';
+            }else{
+                pr[i].other =pr[i].artist;
+            }
         }
-        upd();
+        return pr;
     }
     /**
      * вставка картинок в массив данных
      */
-    async function images() {
+    async function images(mass) {
+        let pr=[...mass];
         for (let i = 0; i < pr.length; i++) {
             pr[i].image = await getPic();
         }
-        upd();
-    }
-    /** 
-     * создане карточек по массиву днных
-    */
-    function upd() {
-        let arr2 = [];
-        if(props.isArtists){
-            for (let i = 0; i < pr.length; i++) {
-                arr2.push(<SearchSquareCard image={pr[i].image} title={pr[i].name} listenersCount={pr[i].listeners + " listeners"} key={i} />);
-            }
-        }else{
-            for (let i = 0; i < pr.length; i++) {
-                arr2.push(<SearchSquareCard image={pr[i].image} title={pr[i].name} listenersCount={pr[i].artist} key={i} />);
-            }
-        }
-        
-        setArr(arr2);
+        return pr;
     }
     useEffect(() => {
-        async function tmp() {
-            await namess();
-            await images();
+        async function tmp(){
+            let t = await namess();
+            setArr([...t]);
+            t = await images(t);
+            setArr([...t]);
         }
         tmp();
 
@@ -63,7 +56,9 @@ export const SearchSquareSet = (props) => {
 
     return (
         <div className="search_square_set">
-            {arr}
+            {arr.map(element => {
+                        return <SearchSquareCard image={element.image} title={element.name} listenersCount={element.other} key={element.key} />
+                    })}
         </div>
     );
 }
